@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neon Spend – Expense Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-circle">₹</div>
+        <div>
+          <div class="logo-text">Neon Spend</div>
+          <div class="logo-subtext">Expense Dashboard</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" id="btnDashboard">
+          <span class="nav-icon">🏠</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" id="btnExpenses">
+          <span class="nav-icon">📒</span>
+          <span>Expenses</span>
+        </button>
+        <button class="nav-item" id="btnAnalytics">
+          <span class="nav-icon">📊</span>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" id="btnSettings">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          Live session
+        </div>
+        <div class="small-text">v1.0 – Emerald Neon</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD PAGE -->
+      <section id="sectionDashboard" class="page page-active">
+        <header class="topbar">
+          <div>
+            <h1 class="top-title">Expense Tracker</h1>
+            <p class="top-subtitle">
+              Vibrant neon dashboard to monitor your daily spending.
+            </p>
+          </div>
+
+          <div class="topbar-right">
+            <div class="total-card">
+              <div class="total-label">Total Spent</div>
+              <div class="total-value">₹<span id="totalAmount">0.00</span></div>
+            </div>
+          </div>
+        </header>
+
+        <section class="content-grid">
+          <!-- Add Expense -->
+          <section class="card form-card">
+            <div class="card-header">
+              <h2>Add Expense</h2>
+              <span class="badge">Live</span>
+            </div>
+
+            <form id="expenseForm" class="expense-form">
+              <div class="field">
+                <label for="title">Title</label>
+                <input id="title" type="text" placeholder="e.g. Grocery run" required />
+              </div>
+
+              <div class="field">
+                <label for="amount">Amount (₹)</label>
+                <input id="amount" type="number" min="1" step="0.01" placeholder="0.00" required />
+              </div>
+
+              <div class="field">
+                <label for="category">Category</label>
+                <select id="category">
+                  <option value="food">Food</option>
+                  <option value="transport">Transport</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="bills">Bills</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="date">Date</label>
+                <input id="date" type="date" />
+              </div>
+
+              <div class="field field-button">
+                <button type="submit" class="btn btn-primary">
+                  ＋ Add Expense
+                </button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Recent Expenses -->
+          <section class="card table-card">
+            <div class="card-header">
+              <h2>Recent Expenses</h2>
+              <span class="muted-text" id="expenseCountLabel">0 items</span>
+            </div>
+
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Amount (₹)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="expenseTableBody">
+                  <tr>
+                    <td colspan="5" class="empty-state">
+                      No expenses added yet. Start tracking your spending. 💸
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Category Breakdown (Bar) -->
+          <section class="card chart-card">
+            <div class="card-header">
+              <h2>Category Breakdown</h2>
+              <span class="muted-text">Neon analytics</span>
+            </div>
+            <canvas id="categoryChart"></canvas>
+          </section>
+        </section>
+      </section>
+
+      <!-- EXPENSES PAGE -->
+      <section id="sectionExpenses" class="page">
+        <header class="topbar">
+          <div>
+            <h1 class="top-title">All Expenses</h1>
+            <p class="top-subtitle">Search, filter and manage your expense history.</p>
+          </div>
+        </header>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Filters</h2>
+          </div>
+
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="field">
+                <label for="searchText">Search</label>
+                <input id="searchText" type="text" placeholder="Search by title..." />
+              </div>
+
+              <div class="field">
+                <label for="filterCategory">Category</label>
+                <select id="filterCategory">
+                  <option value="all">All</option>
+                  <option value="food">Food</option>
+                  <option value="transport">Transport</option>
+                  <option value="shopping">Shopping</option>
+                  <option value="bills">Bills</option>
+                  <option value="entertainment">Entertainment</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="filterFrom">From</label>
+                <input id="filterFrom" type="date" />
+              </div>
+
+              <div class="field">
+                <label for="filterTo">To</label>
+                <input id="filterTo" type="date" />
+              </div>
+            </div>
+
+            <div class="toolbar-right">
+              <button id="btnClearFilters" class="btn btn-ghost">Reset Filters</button>
+              <button id="btnExportCsv" class="btn btn-outline">Export CSV</button>
+              <button id="btnClearAll" class="btn btn-danger-soft">Clear All</button>
+            </div>
+          </div>
+
+          <div class="expenses-summary">
+            <span id="expensesCountSummary">0 expenses</span>
+            <span id="expensesTotalSummary">Total: ₹0.00</span>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody id="expensesFullTableBody">
+                <tr>
+                  <td colspan="4" class="empty-state">No data yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <!-- ANALYTICS PAGE -->
+      <section id="sectionAnalytics" class="page">
+        <header class="topbar">
+          <div>
+            <h1 class="top-title">Analytics</h1>
+            <p class="top-subtitle">Visualize how and when you spend your money.</p>
+          </div>
+        </header>
+
+        <!-- Summary cards -->
+        <section class="summary-grid">
+          <div class="summary-card">
+            <div class="summary-label">This month</div>
+            <div class="summary-value" id="summaryThisMonth">₹0.00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Average per expense</div>
+            <div class="summary-value" id="summaryAverage">₹0.00</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Total expenses</div>
+            <div class="summary-value" id="summaryCount">0</div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-label">Top category</div>
+            <div class="summary-value" id="summaryTopCategory">–</div>
+          </div>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts-grid">
+          <section class="card">
+            <div class="card-header">
+              <h2>Monthly Spending</h2>
+              <span class="muted-text">Line chart</span>
+            </div>
+            <canvas id="monthlyChart"></canvas>
+          </section>
+
+          <section class="card">
+            <div class="card-header">
+              <h2>Category Share</h2>
+              <span class="muted-text">Pie chart</span>
+            </div>
+            <canvas id="categoryPieChart"></canvas>
+          </section>
+        </section>
+      </section>
+
+      <!-- SETTINGS PAGE -->
+      <section id="sectionSettings" class="page">
+        <header class="topbar">
+          <div>
+            <h1 class="top-title">Settings</h1>
+            <p class="top-subtitle">Customize your Neon Spend dashboard.</p>
+          </div>
+        </header>
+
+        <section class="settings-grid">
+          <section class="card profile-card">
+            <h2 class="card-title">Profile</h2>
+            <p class="muted-text">Local demo profile (no auth yet).</p>
+            <div class="profile-info">
+              <div class="avatar">F</div>
+              <div>
+                <div class="profile-name">Demo User</div>
+                <div class="profile-role">Student • Expense Tracker</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">Appearance</h2>
+            <div class="settings-row">
+              <div>
+                <div class="settings-label">Light mode</div>
+                <div class="muted-text">Toggle between dark and light themes.</div>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="themeToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2 class="card-title">Data</h2>
+            <p class="muted-text">
+              This will clear all expenses on this device (frontend only).
+            </p>
+            <button id="btnResetData" class="btn btn-danger-soft wide-btn">
+              Reset all expense data
+            </button>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
